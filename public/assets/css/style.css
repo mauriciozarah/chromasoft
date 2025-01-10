@@ -1,0 +1,66 @@
+body, html{
+    height:100%;
+    width:100%;
+}
+
+.float-label{
+    font-size: 12px !important;
+    position: relative;
+    top: 18px;
+    left: 5px;
+    transition: 0.2s;
+    background-color: white;
+    padding: 0px 2px;
+    color: #138496;
+    pointer-events: none;
+    letter-spacing: 0.05rem;
+    z-index: 3 !important;
+}
+
+/*-----------------------------*/
+.login_page {
+    width:100%;
+    height:100% !important;
+    background:url('./../img/reuniao.jpg') center center no-repeat;
+    background-size:cover;
+    display:flex;
+    flex-flow:wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.bd{
+    width:320px;
+    margin: 0 auto;
+    background:#ffffff20;
+    backdrop-filter: blur(7px);
+    color:#fff;
+    border:1px solid #fff;
+}
+
+
+.bd-system{
+    width:80%;
+    height:auto;
+    min-height:500px;
+    margin: 0 auto;
+    background:#cccccc35;
+    backdrop-filter: blur(7px);
+    color:#fff;
+    border:1px solid #fff;
+}
+
+.btn{
+    background:#ffffff20 !important;
+    border:1px solid #fff !important;
+}
+
+.btn:hover{
+    background:#ffffff20 !important;
+    border:1px solid #fff !important;
+}
+
+.field{
+    background:#ffffff20 !important;
+    color:#fff !important;
+}
