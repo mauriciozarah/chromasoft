@@ -74,7 +74,7 @@ class UsuarioController extends Controller
         $valid = $request->validate([
             'nome'   => 'required',
             'email'  => 'email|required|max:100|unique:usuarios',
-            'senha'  => 'required|max:100'
+            'senha'  => 'required|max:100|min:6'
         ],[
             'nome.required'   => 'O Campo Nome é obrigatório',
             'email.email'     => 'O Campo e-mail deve conter um e-mail válido',
@@ -82,7 +82,8 @@ class UsuarioController extends Controller
             'email.max'       => 'O Campo E-mail deve ter no máximo 100 caracteres',
             'email.unique'    => 'Já existe usuário com esse E-mail',
             'senha.required'  => 'Senha é obrigatória',
-            'senha.max'       => 'Senha deve conter no máximo 100 caracteres'
+            'senha.max'       => 'Senha deve conter no máximo 100 caracteres',
+            'senha.min'       => 'Senha deve conter ao menos 6 caracteres'
         ]);
 
         $registro = $request->all();

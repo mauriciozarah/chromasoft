@@ -18,11 +18,14 @@ body, html{
 }
 
 /*-----------------------------*/
+.wrapper{
+    background:url('./../img/reuniao.jpg') center center no-repeat;
+    background-size:cover;
+}
+
 .login_page {
     width:100%;
     height:100% !important;
-    background:url('./../img/reuniao.jpg') center center no-repeat;
-    background-size:cover;
     display:flex;
     flex-flow:wrap;
     justify-content: center;
