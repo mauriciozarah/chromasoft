@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{{asset('assets/css/swal.css')}}" />
 </head>
 <body>
-    <div class="wrapper" style="width:100% !important;height:960px !important">
+    <div class="wrapper" style="width:100% !important;height:100vh !important">
         @yield('content')
     </div>
     <script src="{{asset('assets/js/jquery.min.js')}}"></script>
