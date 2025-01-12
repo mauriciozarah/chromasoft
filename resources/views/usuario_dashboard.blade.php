@@ -236,7 +236,7 @@ var del = async id => {
     await $.ajax({
 		url:"{{route('usuario.delete')}}/"+id,
 		type:"delete",
-        data:{'_token':"{{csrf_token()}}"},
+        headers:{'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
 		success: function (data) {
 			if (!data.error) {
 				new Swal({

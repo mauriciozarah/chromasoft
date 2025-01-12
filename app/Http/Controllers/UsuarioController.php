@@ -150,9 +150,7 @@ class UsuarioController extends Controller
 
 
 
-    // ---------  Funções de tratativas das operações --------------
-
-
+    // ---------  Funções de tratativas das operações -------------------------------
 
     private static function getIdUsuario (string $hash) : string 
     {
@@ -192,6 +190,6 @@ class UsuarioController extends Controller
         return $registro;
     }
 
-    // ------------  fim das funções de tratativas --------------------------
+    // ------------  fim das funções de tratativas -----------------------------------------------
 
 }
