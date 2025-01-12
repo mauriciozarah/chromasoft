@@ -200,6 +200,7 @@ var update = async () => {
 		success: function (data) {
 			$(".bd-modal-lg-edit").modal('hide');
 			$("#form-editar input").val("");
+            $("#editar").text("Editar...");
             $("#editar").attr('disabled', false);
 			if (!data.error) {
 				new Swal({
@@ -222,6 +223,7 @@ var update = async () => {
 		},
         error: function (error) {
             $("#editar").attr('disabled', false);
+            $("#editar").text("Editar");
             new Swal({
                 title:'Erro',
                 text:error.responseJSON.message,
@@ -274,6 +276,7 @@ $("#cadastrar").on("click", async function () {
 		},
 		success: function (data) {
 			$("#cadastrar").text("Cadastrar");
+            $("#cadastrar").attr('disabled', false);
 			$("#form-cadastrar input").val("");
 			$(".bd-example-modal-lg").modal('hide');
     		if (!data.error) {

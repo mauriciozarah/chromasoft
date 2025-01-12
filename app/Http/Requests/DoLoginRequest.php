@@ -32,7 +32,7 @@ class DoLoginRequest extends FormRequest
         return [
             'email'     => "O Campo :attribute deve conter um e-mail válido",
             'required'  => 'O Campo :attribute é obrigatório',
-            'max:100'       => 'O Campo :attribute deve ter no máximo 100 caracteres'
+            'max:100'   => 'O Campo :attribute deve ter no máximo 100 caracteres'
         ];
     }
 }

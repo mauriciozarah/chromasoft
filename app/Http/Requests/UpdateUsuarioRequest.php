@@ -33,10 +33,10 @@ class UpdateUsuarioRequest extends FormRequest
     public function messages () : array
     {
         return [
-            'required'      => 'O Campo :attribute é obrigatório',
-            'email'        => 'O Campo :attribute deve conter um e-mail válido',
-            'max:100'          => 'O Campo :attribute deve ter no máximo 100 caracteres',
-            'min:6'          => ':attribute deve conter no mínimo 6 caracteres'
+            'required'  => 'O Campo :attribute é obrigatório',
+            'email'     => 'O Campo :attribute deve conter um e-mail válido',
+            'max:100'   => 'O Campo :attribute deve ter no máximo 100 caracteres',
+            'min:6'     => ':attribute deve conter no mínimo 6 caracteres'
         ];
     }
 }
