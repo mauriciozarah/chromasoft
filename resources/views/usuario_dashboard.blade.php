@@ -50,7 +50,6 @@
     <div class="modal-dialog modal-lg" style="border:none !important">
 	    <div class="modal-content" style="background:transparent; border:none !important;">
             <form id="form-cadastrar" method="post">
-                @csrf
                 <div class="card mt-2 ml-2 mr-2 mb-2 bd-system" style="width:100%">
                     <div class="card-header bg-custom">
                         <div style="float:left">Cadastrar Usuário</div>
@@ -87,7 +86,6 @@
 	    <div class="modal-content" style="background:transparent; border:none !important;">
             <form id="form-editar" method="post">
                 <input type="hidden" name="_method" value="put">
-                @csrf
                 <div class="card mt-2 ml-2 mr-2 mb-2 bd-system" style="width:100%">
                     <div class="card-header bg-custom">
                         <div style="float:left">Editar Usuário</div>
@@ -193,6 +191,7 @@ var update = async () => {
 		url:"{{route('usuario.update')}}",
 		type:"put",
 		data:$("#form-editar").serialize(),
+        headers:{'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
 		beforeSend: function () {
 			$("#editar").text("Editando...");
             $("#editar").attr('disabled', true);
@@ -270,6 +269,7 @@ $("#cadastrar").on("click", async function () {
 		url:"{{route('usuario.store')}}",
 		type:"POST",
 		data:$("#form-cadastrar").serialize(),
+        headers:{'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
 		beforeSend: function () {
 			$("#cadastrar").text("Cadastrando...");
             $("#cadastrar").attr('disabled', true);

@@ -51,6 +51,10 @@ class UsuarioController extends Controller
         return view('usuario_dashboard', compact('resultSet'));
     }
 
+
+    // --------------   Funções do CRUD de Usuarios ----------------------------------
+
+
     public function showUsuario ($id) 
     {
         $resultSet = UsuarioModel::where('id','=',self::getIdUsuario($id))->select('nome','email','id')->first();
@@ -89,48 +93,35 @@ class UsuarioController extends Controller
         $id_usuario = self::getIdUsuario($request->id_edit);
      
         // tirando o token e o method do request e o id da edição
-        $registro = $request->except('_method','_token','id_edit');
+        $registro = $request->except('_method','id_edit');
 
 
-        // =============== TRATAMENTO DE DADOS =================================================
+        // =============== TRATAMENTO DE DADOS ==========================
+        $registro = self::senhaUpdate($registro);                     //|
+        $registro = self::emailUpdateExists($registro);               //|
+        // =============== FIM DE TRATAMENTO DE DADOS ===================
 
-        // se a senha for diferente de vazio
-        if ($registro['senha'] != "") {
-            // criptografando a senha
-            $registro['senha'] = Hash::make($registro['senha']);
-        } else {
-            // retirando a senha do array de atualização
-            unset($registro['senha']);
-        }
-        
 
-        // se o e-mail mudou, tem que se ver se o novo e-mail já não está cadastrado no sistema
-        if ($request->email != $request->email_old) {
-            $jaExiste = UsuarioModel::where('email','=',$request->email)->first();
-            if ($jaExiste) {
-                return response()->json(['error' => true, 'msg' => 'O E-mail já se encontra cadastrado no Sistema']);
+        // se passou pelo tratamento de dados
+        if ($registro) {
+
+            // Seguindo com a atualização
+            DB::beginTransaction();
+
+            try {
+                UsuarioModel::where('id','=',$id_usuario)->update($registro);
+                DB::commit();
+                return response()->json(['error' => false, 'msg' => 'Editado com Sucesso.']);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json(['error' => true, 'msg' => $e->getMessage()]);
             }
+
         }
 
-        // retirando o email antigo do array de atualização
-        unset($registro['email_old']);
-
-
-        // ======================= FIM DE TRATAMENTO DE DADOS ==================================
-
-
-
-
-        // Seguindo com a atualização
-        DB::beginTransaction();
-
-        try {
-            UsuarioModel::where('id','=',$id_usuario)->update($registro);
-            DB::commit();
-            return response()->json(['error' => false, 'msg' => 'Editado com Sucesso.']);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => true, 'msg' => $e->getMessage()]);
+        // se não passou pelo tratamento de dados
+        if (!$registro) {
+            return response()->json(['error' => true, 'msg' => 'E-mail já cadastrado']);
         }
     }
 
@@ -158,10 +149,49 @@ class UsuarioController extends Controller
 
 
 
-    private static function getIdUsuario(string $hash) : string 
+
+    // ---------  Funções de tratativas das operações --------------
+
+
+
+    private static function getIdUsuario (string $hash) : string 
     {
         return Crypt::decrypt($hash);
     }
 
+    private static function senhaUpdate (array $registro) : array 
+    {
+        // se a senha for diferente de vazio
+        if ($registro['senha'] != "") {
+            // criptografando a senha
+            $registro['senha'] = Hash::make($registro['senha']);
+        } else {
+            // retirando a senha do array de atualização
+            unset($registro['senha']);
+        }
+
+        return $registro;
+    }
+
+    private static function emailUpdateExists (array $registro) : mixed 
+    {
+        $jaExiste = false;
+
+        // se o e-mail mudou, tem que se ver se o novo e-mail já não está cadastrado no sistema
+        if ($registro['email'] != $registro['email_old']) {
+            $jaExiste = UsuarioModel::where('email','=',$registro['email'])->first();
+        }
+
+        // retirando o email antigo do array de atualização
+        unset($registro['email_old']);
+
+        if ($jaExiste) {
+            return false;
+        }
+
+        return $registro;
+    }
+
+    // ------------  fim das funções de tratativas --------------------------
 
 }
