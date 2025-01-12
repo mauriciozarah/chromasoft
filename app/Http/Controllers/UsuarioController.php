@@ -24,20 +24,22 @@ class UsuarioController extends Controller
     public function do_login (DoLoginRequest $request)
     {
  
-        // resgatando e descriptografando a senha do banco, através do e-mail de login
+        // resgatando o usuario
         $user = UsuarioModel::getSenha($request->email);
+        // se não existir
         if (!$user) {
             return response()->json(['error' => true, 'msg' => 'Usuário não encontrado.']);
         }
         
-        // descriptografando a senha do banco
+        // comparando as senhas
         $this->assign = Hash::check($request->senha, $user->senha);
         
-        // comparando as senhas
+        // se senhas forem diferentes
         if (!$this->assign) {
             return response()->json(['error' => true, 'msg' => 'Usuário não encontrado']);
         }
 
+        // se as senhas e o login for feito com sucesso
         session()->put('usuario', $user->id);
 
     }
@@ -45,6 +47,7 @@ class UsuarioController extends Controller
     public function dashboard ()
     {
         $resultSet = UsuarioModel::where('id','<>','NULL')->select('nome','email','id')->get();
+        
         return view('usuario_dashboard', compact('resultSet'));
     }
 
