@@ -67,3 +67,13 @@ body, html{
     background:#ffffff20 !important;
     color:#fff !important;
 }
+
+.table > tbody > tr.active > td > a {
+    color:#fff;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    color: #fff !important;
+    border: 1px solid #fff!important;
+    background-color: transparent !important;
+}

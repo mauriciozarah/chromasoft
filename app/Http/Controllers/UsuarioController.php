@@ -7,6 +7,9 @@ use App\Models\UsuarioModel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\CreteUsuarioRequest;
+use App\Http\Requests\UpdateUsuarioRequest;
+use App\Http\Requests\DoLoginRequest;
 
 class UsuarioController extends Controller
 {
@@ -18,20 +21,9 @@ class UsuarioController extends Controller
         return view('usuario_login');
     }
     
-    public function do_login (Request $request)
+    public function do_login (DoLoginRequest $request)
     {
-        // validaçoes
-        $valid = $request->validate([
-            'email'  => 'email|required|max:100',
-            'senha'  => 'required|max:100'
-        ],[
-            'email.email'     => 'O Campo e-mail deve conter um e-mail válido',
-            'email.required'  => 'O Campo E-mail é obrigatório',
-            'email.max'       => 'O Campo E-mail deve ter no máximo 100 caracteres',
-            'senha.required'  => 'Senha é obrigatória',
-            'senha.max'       => 'Senha deve conter no máximo 100 caracteres'
-        ]);
-
+ 
         // resgatando e descriptografando a senha do banco, através do e-mail de login
         $user = UsuarioModel::getSenha($request->email);
         if (!$user) {
@@ -58,7 +50,7 @@ class UsuarioController extends Controller
 
     public function showUsuario ($id) 
     {
-        $resultSet = UsuarioModel::where('id','=',Crypt::decrypt($id))->select('nome','email','id')->first();
+        $resultSet = UsuarioModel::where('id','=',self::getIdUsuario($id))->select('nome','email','id')->first();
 
         if ($resultSet) {
             $resultSet->id = $id;
@@ -68,24 +60,9 @@ class UsuarioController extends Controller
         return response()->json(['error' => true, 'msg' => 'Erro ao buscar registro']);
     }
 
-    public function createUsuario (Request $request)
-    {
-        // validaçoes
-        $valid = $request->validate([
-            'nome'   => 'required',
-            'email'  => 'email|required|max:100|unique:usuarios',
-            'senha'  => 'required|max:100|min:6'
-        ],[
-            'nome.required'   => 'O Campo Nome é obrigatório',
-            'email.email'     => 'O Campo e-mail deve conter um e-mail válido',
-            'email.required'  => 'O Campo E-mail é obrigatório',
-            'email.max'       => 'O Campo E-mail deve ter no máximo 100 caracteres',
-            'email.unique'    => 'Já existe usuário com esse E-mail',
-            'senha.required'  => 'Senha é obrigatória',
-            'senha.max'       => 'Senha deve conter no máximo 100 caracteres',
-            'senha.min'       => 'Senha deve conter ao menos 6 caracteres'
-        ]);
 
+    public function createUsuario (CreteUsuarioRequest $request)
+    {
         $registro = $request->all();
         $registro['senha'] = Hash::make($registro['senha']);
 
@@ -102,37 +79,24 @@ class UsuarioController extends Controller
     }
 
 
-    public function updateUsuario (Request $request)
+    public function updateUsuario (UpdateUsuarioRequest $request)
     {
-        // validaçoes
-        $valid = $request->validate([
-            'nome'      => 'required',
-            'email'     => 'email|required|max:100',
-            'email_old' => 'required|email',
-            'senha'     => 'nullable',
-            'id_edit'   => 'required'
-        ],[
-            'nome.required'      => 'O Campo Nome é obrigatório',
-            'email.email'        => 'O Campo e-mail deve conter um e-mail válido',
-            'email.required'     => 'O Campo E-mail é obrigatório',
-            'email.max'          => 'O Campo E-mail deve ter no máximo 100 caracteres',
-            'email_old.required' => 'O Campo E-mail de verificação é obrigatório',
-            'email_old.email'    => 'O Campo E-mail de verificação deve ser um E-mail Válido',
-            'senha.max'          => 'Senha deve conter no máximo 100 caracteres',
-            'id_edit.required'   => 'Identificação do id é necessário'
-        ]);
-
+ 
         // pegando o id do usuario e descriptografando
         $id_usuario = self::getIdUsuario($request->id_edit);
-        
-        $registro = $request->all();
-        // tirando do array o token e o metodo
-        unset($registro['_token']);
-        unset($registro['_method']);
+     
+        // tirando o token e o method do request e o id da edição
+        $registro = $request->except('_method','_token','id_edit');
+
+
+        // =============== TRATAMENTO DE DADOS =================================================
+
         // se a senha for diferente de vazio
         if ($registro['senha'] != "") {
+            // criptografando a senha
             $registro['senha'] = Hash::make($registro['senha']);
         } else {
+            // retirando a senha do array de atualização
             unset($registro['senha']);
         }
         
@@ -145,10 +109,13 @@ class UsuarioController extends Controller
             }
         }
 
-        // retirando o email antigo da query
+        // retirando o email antigo do array de atualização
         unset($registro['email_old']);
-        // retirando o id_edit
-        unset($registro['id_edit']);
+
+
+        // ======================= FIM DE TRATAMENTO DE DADOS ==================================
+
+
 
 
         // Seguindo com a atualização
